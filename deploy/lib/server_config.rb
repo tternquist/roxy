@@ -717,6 +717,7 @@ but --no-prompt parameter prevents prompting for password. Assuming 8.'
     else
       logger.info "Bootstrapping your project into MarkLogic #{@properties['ml.server-version']} on #{@hostname}..."
       config = get_config 
+      logger.debug config
     end
 
     apply_changes = find_arg(['--apply-changes'])
@@ -2507,6 +2508,8 @@ private
     config_files.split(",").each do |config_file|
       config = File.read(config_file)
       apply_forest_assignments config
+      apply_roles config
+      apply_users config
 
     # Build the triggers db if it is provided
     if @properties['ml.triggers-db'].present?
@@ -2702,6 +2705,23 @@ private
 
           forest_array.each { |a| forest_elems <<  "<forest-id name='#{a}'/>"}
           config.gsub!("@ml.content-forest-assignments",  forest_elems)
+        end
+  end
+  
+  def apply_roles(config)
+    roles_filename = 'ml.roles.file'
+    if  @properties[roles_filename].present?
+          logger.info "Reading Roles.."
+          roles_config = File.read( @properties[roles_filename])
+          config.gsub!("@ml.roles",  roles_config)
+        end
+  end
+  def apply_users(config)
+    users_filename = 'ml.users.file'
+    if  @properties[users_filename].present?
+          logger.info "Reading Users.."
+          users_config = File.read( @properties[users_filename])
+          config.gsub!("@ml.users",  users_config)
         end
   end
 
