@@ -2700,11 +2700,11 @@ private
           assignment_elems = ""
           assignment_array.each { |a| assignment_elems <<  a}
 
-          config.gsub!("@ml.content-forest-assignments-xml", assignment_elems)
+          config.gsub!("@ml.content-db-assignment", assignment_elems)
           forest_elems = ""
 
           forest_array.each { |a| forest_elems <<  "<forest-id name='#{a}'/>"}
-          config.gsub!("@ml.content-forest-assignments",  forest_elems)
+          config.gsub!("@ml.content-forests",  forest_elems)
         end
   end
   

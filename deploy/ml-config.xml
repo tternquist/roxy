@@ -137,7 +137,7 @@
 
   <!--Assignments-->
   <assignments xmlns="http://marklogic.com/xdmp/assignments" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://marklogic.com/xdmp/assignments assignments.xsd">
-    @ml.content-db-assignment-xml
+    @ml.content-db-assignment
     @ml.test-content-db-assignment
     @ml.test-modules-db-assignment
     @ml.rest-modules-db-assignment
@@ -162,7 +162,7 @@
       @ml.schemas-mapping
       @ml.triggers-mapping
       <forests>
-      @ml.content-forest-assignments
+      @ml.content-forests
       </forests>
 
       <!-- See sample/default-docs-config.sample.xml for default settings and indexes of Documents database -->
