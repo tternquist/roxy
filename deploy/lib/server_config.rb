@@ -25,6 +25,7 @@ require 'date'
 require 'ml_rest'
 require 'time'
 require 'tmpdir'
+require 'rexml/document'
 
 class ExitException < Exception; end
 
@@ -715,7 +716,7 @@ but --no-prompt parameter prevents prompting for password. Assuming 8.'
       logger.debug config
     else
       logger.info "Bootstrapping your project into MarkLogic #{@properties['ml.server-version']} on #{@hostname}..."
-      config = get_config
+      config = get_config 
     end
 
     apply_changes = find_arg(['--apply-changes'])
@@ -2505,6 +2506,7 @@ private
     configs = []
     config_files.split(",").each do |config_file|
       config = File.read(config_file)
+      apply_forest_assignments config
 
     # Build the triggers db if it is provided
     if @properties['ml.triggers-db'].present?
@@ -2674,6 +2676,33 @@ private
     contents.scan(/[@$]\{[^}]+\}/).each do |match|
       logger.warn("Unresolved property #{match} in #{name}")
     end
+  end
+  
+  def apply_forest_assignments(config)
+    if  @properties['ml.content-forest-assignments.file'].present?
+          logger.info "Reading Assignments.."
+          assignments_config = File.read( @properties['ml.content-forest-assignments.file'])
+          doc = REXML::Document.new(assignments_config)
+          forest_array = Array.new  
+          doc.elements.each('forest-assignments/primary-forests/assignments/assignment') do |elem|
+            forest_array.push elem.elements['forest-name'][0].value
+          end
+          assignment_array = Array.new
+          doc.elements.each('forest-assignments/primary-forests/assignments/assignment') do |elem|
+            assignment_array.push "#{elem}"
+          end
+          doc.elements.each('forest-assignments/replica-forests/assignments/assignment') do |elem|
+            assignment_array.push "#{elem}"
+          end
+          assignment_elems = ""
+          assignment_array.each { |a| assignment_elems <<  a}
+
+          config.gsub!("@ml.content-forest-assignments-xml", assignment_elems)
+          forest_elems = ""
+
+          forest_array.each { |a| forest_elems <<  "<forest-id name='#{a}'/>"}
+          config.gsub!("@ml.content-forest-assignments",  forest_elems)
+        end
   end
 
   def ServerConfig.properties(prop_file_location = @@path)
