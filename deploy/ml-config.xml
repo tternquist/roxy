@@ -137,10 +137,7 @@
 
   <!--Assignments-->
   <assignments xmlns="http://marklogic.com/xdmp/assignments" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://marklogic.com/xdmp/assignments assignments.xsd">
-    <assignment>
-      <forest-name>${content-db}</forest-name>
-      @ml.forest-data-dir-xml
-    </assignment>
+    @ml.content-db-assignment-xml
     @ml.test-content-db-assignment
     @ml.test-modules-db-assignment
     @ml.rest-modules-db-assignment
@@ -162,12 +159,10 @@
     @ml.rest-modules-db-xml
     <database>
       <database-name>${content-db}</database-name>
-      <forests-per-host>${content-forests-per-host}</forests-per-host>
       @ml.schemas-mapping
       @ml.triggers-mapping
       <forests>
-        <forest-id name="${content-db}"/>
-        @ml.forest-data-dir-xml
+      @ml.content-forest-assignments
       </forests>
 
       <!-- See sample/default-docs-config.sample.xml for default settings and indexes of Documents database -->
@@ -432,7 +427,7 @@
   </certificates>
   @ml.roles
   @ml.users
-  <amps xmlns="http://marklogic.com/xdmp/security">
+   <amps xmlns="http://marklogic.com/xdmp/security">
     <!--
       Sample amp. See the Understanding and Using Security Guide section 5.2 for
       information about amps.
